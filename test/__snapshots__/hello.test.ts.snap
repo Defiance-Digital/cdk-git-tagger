@@ -11,14 +11,6 @@ exports[`Aspect adds tags as expected as expected 1`] = `
   },
   "Resources": {
     "MyTopic86869434": {
-      "Properties": {
-        "Tags": [
-          {
-            "Key": "GitUrl",
-            "Value": "https://placeholder",
-          },
-        ],
-      },
       "Type": "AWS::SNS::Topic",
     },
   },

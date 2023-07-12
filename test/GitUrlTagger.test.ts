@@ -24,6 +24,9 @@ describe('Aspect adds tags as expected', () => {
 
     const matchesSSH = regexSSH.test(urlCapture.asString());
     const matchesHTTPS = regexHTTPS.test(urlCapture.asString());
+    console.log('HTTPS: ' + matchesHTTPS);
+    console.log('SSH: ' + matchesSSH);
+    console.log(urlCapture.asString());
     expect(matchesSSH || matchesHTTPS).toBeTruthy();
   });
 
@@ -45,6 +48,9 @@ describe('Aspect adds tags as expected', () => {
 
     const matchesSSH = regexSSH.test(urlCapture.asString());
     const matchesHTTPS = regexHTTPS.test(urlCapture.asString());
+    console.log('HTTPS: ' + matchesHTTPS);
+    console.log('SSH: ' + matchesSSH);
+    console.log(urlCapture.asString());
     expect(matchesSSH || matchesHTTPS).toBeTruthy();
   });
 

@@ -1,13 +1,15 @@
 import { awscdk } from 'projen';
+import { NpmAccess } from 'projen/lib/javascript';
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Jayson Rawlins',
-  authorAddress: 'jayson.rawlins@defiance.ai.com',
-  cdkVersion: '2.1.0',
+  authorAddress: 'jayson.rawlins@defiance.ai',
+  cdkVersion: '2.30.0',
   defaultReleaseBranch: 'main',
   jsiiVersion: '~5.0.0',
-  name: 'cdk-aspect-git-tagger',
+  name: '@defiance-digital/cdk-git-tagger',
+  npmAccess: NpmAccess.PUBLIC,
   projenrcTs: true,
-  repositoryUrl: 'https://github.com/jayson.rawlins/cdk-aspect-git-tagger.git',
+  repositoryUrl: 'https://github.com/Defiance-Digital/cdk-git-tagger.git',
 
   // deps: [],                /* Runtime dependencies of this module. */
   // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */

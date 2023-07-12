@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import { IAspect, Tag } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
 
@@ -19,7 +21,34 @@ export class GitUrlTagger implements IAspect {
     new Tag(this.props?.tagName || 'GitUrl', this.getGitUrl()).visit(construct);
   }
 
+
+  findGitDirectory(): string | null {
+    let currentDir = process.cwd(); // Get the current directory
+
+    while (currentDir !== '/') {
+      const gitDir = path.join(currentDir, '.git');
+
+      if (fs.existsSync(gitDir)) {
+        return gitDir;
+      }
+
+      currentDir = path.dirname(currentDir); // Move up to the parent directory
+    }
+
+    return null; // .git directory not found
+  }
+
   getGitUrl(): string {
-    return 'https://placeholder';
+    const gitpath = this.findGitDirectory();
+    if (!gitpath) {
+      throw new Error('No .git folder found');
+    }
+    const data = fs.readFileSync(path.join(gitpath, 'config'), 'utf8');
+    for (const line of data.split('\n')) {
+      if (line.includes('url = ')) {
+        return line.trim().split(' ')[2];
+      }
+    }
+    return 'No Code Repo Found';
   }
 }

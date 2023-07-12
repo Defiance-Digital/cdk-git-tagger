@@ -4,7 +4,7 @@ import { Topic } from 'aws-cdk-lib/aws-sns';
 import { GitUrlTagger } from '../src/GitUrlTagger';
 
 const regexSSH = /^git@[A-Za-z0-9-]+\.[A-Za-z0-9-]+:[A-Za-z0-9-]+\/[A-Za-z0-9-]+\.git$/;
-const regexHTTPS = /^https:\/\/[A-Za-z0-9-]+\.[A-Za-z0-9-]+\/[A-Za-z0-9-]+\/[A-Za-z0-9-]+\.git$/;
+const regexHTTPS = /^https:\/\/[A-Za-z0-9-]+\.[A-Za-z0-9-]+\/[A-Za-z0-9-]+\/[A-Za-z0-9-]+(\.git)?$/;
 
 describe('Aspect adds tags as expected', () => {
   test('with defaults', () => {

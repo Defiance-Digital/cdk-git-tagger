@@ -3,6 +3,9 @@ import { Capture, Template } from 'aws-cdk-lib/assertions';
 import { Topic } from 'aws-cdk-lib/aws-sns';
 import { GitUrlTagger } from '../src/GitUrlTagger';
 
+const regexSSH = /^git@[A-Za-z0-9-]+\.[A-Za-z0-9-]+:[A-Za-z0-9-]+\/[A-Za-z0-9-]+\.git$/;
+const regexHTTPS = /^https:\/\/[A-Za-z0-9-]+\.[A-Za-z0-9-]+\/[A-Za-z0-9-]+\/[A-Za-z0-9-]+\.git$/;
+
 describe('Aspect adds tags as expected', () => {
   test('with defaults', () => {
     const stack = new Stack();
@@ -19,12 +22,8 @@ describe('Aspect adds tags as expected', () => {
       }],
     });
 
-    const regexSSH = /^git@github\.com:[A-Za-z0-9-]+\/[A-Za-z0-9-]+\.git$/;
-    const regexHTTPS = /^https:\/\/github\.com\/[A-Za-z0-9-]+\/[A-Za-z0-9-]+\.git$/;
     const matchesSSH = regexSSH.test(urlCapture.asString());
     const matchesHTTPS = regexHTTPS.test(urlCapture.asString());
-    console.log('SSH: ' + regexSSH.test(urlCapture.asString()));
-    console.log('SSH: ' + regexHTTPS.test(urlCapture.asString()));
     expect(matchesSSH || matchesHTTPS).toBeTruthy();
   });
 
@@ -44,12 +43,8 @@ describe('Aspect adds tags as expected', () => {
       }],
     });
 
-    const regexSSH = /^git@github\.com:[A-Za-z0-9-]+\/[A-Za-z0-9-]+\.git$/;
-    const regexHTTPS = /^https:\/\/github\.com\/[A-Za-z0-9-]+\/[A-Za-z0-9-]+\.git$/;
     const matchesSSH = regexSSH.test(urlCapture.asString());
     const matchesHTTPS = regexHTTPS.test(urlCapture.asString());
-    console.log('SSH: ' + regexSSH.test(urlCapture.asString()));
-    console.log('SSH: ' + regexHTTPS.test(urlCapture.asString()));
     expect(matchesSSH || matchesHTTPS).toBeTruthy();
   });
 

@@ -14,23 +14,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
   githubOptions: {
     mergify: false,
     pullRequestLint: true,
-    pullRequestLintOptions: {
-      semanticTitleOptions: {
-        types: [
-          'feat',
-          'fix',
-          'docs',
-          'style',
-          'refactor',
-          'perf',
-          'test',
-          'build',
-          'ci',
-          'chore',
-          'revert',
-        ],
-      },
-    },
   },
   depsUpgrade: false,
   // deps: [],                /* Runtime dependencies of this module. */

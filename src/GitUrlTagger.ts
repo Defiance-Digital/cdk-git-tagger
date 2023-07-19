@@ -5,10 +5,10 @@ import { IConstruct } from 'constructs';
 
 export interface GitUrlTaggerProps {
   /**
-   * The Tag key/name to use
-   *
-   * @default 'GitUrl'
-   */
+     * The Tag key/name to use
+     *
+     * @default 'GitUrl'
+     */
   readonly tagName?: string;
 }
 
@@ -18,11 +18,11 @@ export class GitUrlTagger implements IAspect {
   }
 
   visit(construct: IConstruct): void {
-    new Tag(this.props?.tagName || 'GitUrl', this.getGitUrl()).visit(construct);
+    new Tag(this.props?.tagName || 'GitUrl', this.retrieveGitUrl()).visit(construct);
   }
 
 
-  findGitDirectory(): string | null {
+  findGitDirectory(): string {
     let currentDir = process.cwd(); // Get the current directory
 
     while (currentDir !== '/') {
@@ -35,10 +35,10 @@ export class GitUrlTagger implements IAspect {
       currentDir = path.dirname(currentDir); // Move up to the parent directory
     }
 
-    return null; // .git directory not found
+    return ''; // .git directory not found
   }
 
-  getGitUrl(): string {
+  retrieveGitUrl(): string {
     const gitpath = this.findGitDirectory();
     if (!gitpath) {
       throw new Error('No .git folder found');

@@ -1,1 +1,1 @@
-export {} from './GitUrlTagger';
+export { GitUrlTagger, GitUrlTaggerProps } from './GitUrlTagger';

@@ -1,8 +1,8 @@
 {
-  "name": "cdk-aspect-git-tagger",
+  "name": "@defiance-digital/cdk-git-tagger",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jayson.rawlins/cdk-aspect-git-tagger.git"
+    "url": "https://github.com/Defiance-Digital/cdk-git-tagger.git"
   },
   "scripts": {
     "build": "npx projen build",
@@ -18,19 +18,17 @@
     "package-all": "npx projen package-all",
     "package:js": "npx projen package:js",
     "post-compile": "npx projen post-compile",
-    "post-upgrade": "npx projen post-upgrade",
     "pre-compile": "npx projen pre-compile",
     "release": "npx projen release",
     "test": "npx projen test",
     "test:watch": "npx projen test:watch",
     "unbump": "npx projen unbump",
-    "upgrade": "npx projen upgrade",
     "watch": "npx projen watch",
     "projen": "npx projen"
   },
   "author": {
     "name": "Jayson Rawlins",
-    "email": "jayson.rawlins@defiance.ai.com",
+    "email": "jayson.rawlins@defiance.ai",
     "organization": false
   },
   "devDependencies": {
@@ -38,7 +36,7 @@
     "@types/node": "^16",
     "@typescript-eslint/eslint-plugin": "^5",
     "@typescript-eslint/parser": "^5",
-    "aws-cdk-lib": "2.86.0",
+    "aws-cdk-lib": "2.30.0",
     "constructs": "10.0.5",
     "eslint": "^8",
     "eslint-import-resolver-node": "^0.3.7",
@@ -50,7 +48,6 @@
     "jsii-diff": "^1.84.0",
     "jsii-docgen": "^9.0.12",
     "jsii-pacmak": "^1.84.0",
-    "npm-check-updates": "^16",
     "projen": "^0.71.114",
     "standard-version": "^9",
     "ts-jest": "^29.1.0",
@@ -58,7 +55,7 @@
     "typescript": "^5.1.5"
   },
   "peerDependencies": {
-    "aws-cdk-lib": "^2.86.0",
+    "aws-cdk-lib": "^2.30.0",
     "constructs": "^10.0.5"
   },
   "keywords": [
@@ -66,6 +63,9 @@
   ],
   "main": "lib/index.js",
   "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "version": "0.0.0",
   "jest": {
     "testMatch": [

@@ -1,5 +1,4 @@
-import { awscdk, github } from 'projen';
-import { GithubCredentials } from 'projen/lib/github';
+import { awscdk } from 'projen';
 import { NpmAccess } from 'projen/lib/javascript';
 
 const project = new awscdk.AwsCdkConstructLibrary({
@@ -33,25 +32,11 @@ const project = new awscdk.AwsCdkConstructLibrary({
       },
     },
   },
-  depsUpgrade: true,
-  depsUpgradeOptions: {
-    workflowOptions: {
-      projenCredentials: GithubCredentials.fromApp({
-        permissions: {
-          pullRequests: github.workflows.AppPermission.WRITE,
-          contents: github.workflows.AppPermission.WRITE,
-          workflows: github.workflows.AppPermission.WRITE,
-        },
-      }),
-    },
-  },
+  depsUpgrade: false,
   // deps: [],                /* Runtime dependencies of this module. */
   // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */
   // devDeps: [],             /* Build dependencies for this module. */
   // packageName: undefined,  /* The "name" in package.json. */
 });
-
-project.github!.tryFindWorkflow('build')!.file!.addOverride('jobs.build.permissions.id-token', 'write');
-project.github!.tryFindWorkflow('upgrade-main')!.file!.addOverride('jobs.upgrade.permissions.id-token', 'write');
 
 project.synth();

@@ -78,7 +78,21 @@ const gitUrlTaggerProps: GitUrlTaggerProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
+| <code><a href="#@defiance-digital/cdk-git-tagger.GitUrlTaggerProps.property.normalizeUrl">normalizeUrl</a></code> | <code>boolean</code> | A flag on whether to try to normalize the URL found in the git config If enabled, it will turn ssh urls into https urls. |
 | <code><a href="#@defiance-digital/cdk-git-tagger.GitUrlTaggerProps.property.tagName">tagName</a></code> | <code>string</code> | The Tag key/name to use. |
+
+---
+
+##### `normalizeUrl`<sup>Optional</sup> <a name="normalizeUrl" id="@defiance-digital/cdk-git-tagger.GitUrlTaggerProps.property.normalizeUrl"></a>
+
+```typescript
+public readonly normalizeUrl: boolean;
+```
+
+- *Type:* boolean
+- *Default:* false
+
+A flag on whether to try to normalize the URL found in the git config If enabled, it will turn ssh urls into https urls.
 
 ---
 

@@ -5,20 +5,32 @@ import { IConstruct } from 'constructs';
 
 export interface GitUrlTaggerProps {
   /**
-     * The Tag key/name to use
-     *
-     * @default 'GitUrl'
-     */
+   * The Tag key/name to use
+   *
+   * @default 'GitUrl'
+   */
   readonly tagName?: string;
+
+  /**
+   * A flag on whether to try to normalize the URL found in the git config
+   * If enabled, it will turn ssh urls into https urls.
+   *
+   * @default false
+   */
+  readonly normalizeUrl?: boolean;
 }
 
 export class GitUrlTagger implements IAspect {
+  private gitUrl: string;
 
   constructor(private props?: GitUrlTaggerProps) {
+    const gitUrl = this.retrieveGitUrl();
+    this.gitUrl = props?.normalizeUrl ? this.normalizeUrl(gitUrl) : gitUrl;
+
   }
 
   visit(construct: IConstruct): void {
-    new Tag(this.props?.tagName || 'GitUrl', this.retrieveGitUrl()).visit(construct);
+    new Tag(this.props?.tagName || 'GitUrl', this.gitUrl).visit(construct);
   }
 
 
@@ -50,5 +62,14 @@ export class GitUrlTagger implements IAspect {
       }
     }
     return 'No Code Repo Found';
+  }
+
+  private normalizeUrl(gitUrl: string) {
+    const regexSSH = /^git@([A-Za-z0-9-]+\.[A-Za-z0-9-]+):([A-Za-z0-9-]+)\/([A-Za-z0-9-]+)\.git$/;
+    const [_all, site, org, repo] = regexSSH.exec(gitUrl)!;
+    if (org && repo) {
+      return `https://${site}/${org}/${repo}`;
+    }
+    return gitUrl;
   }
 }

@@ -15,7 +15,7 @@ export interface GitUrlTaggerProps {
    * A flag on whether to try to normalize the URL found in the git config
    * If enabled, it will turn ssh urls into https urls.
    *
-   * @default false
+   * @default true
    */
   readonly normalizeUrl?: boolean;
 }
@@ -25,7 +25,8 @@ export class GitUrlTagger implements IAspect {
 
   constructor(private props?: GitUrlTaggerProps) {
     const gitUrl = this.retrieveGitUrl();
-    this.gitUrl = props?.normalizeUrl ? this.normalizeUrl(gitUrl) : gitUrl;
+    const shouldNormalize = props?.normalizeUrl ?? true;
+    this.gitUrl = shouldNormalize ? this.normalizeUrl(gitUrl) : gitUrl;
 
   }
 
@@ -66,7 +67,11 @@ export class GitUrlTagger implements IAspect {
 
   private normalizeUrl(gitUrl: string) {
     const regexSSH = /^git@([A-Za-z0-9-]+\.[A-Za-z0-9-]+):([A-Za-z0-9-]+)\/([A-Za-z0-9-]+)\.git$/;
-    const [_all, site, org, repo] = regexSSH.exec(gitUrl)!;
+    let regexMatches = regexSSH.exec(gitUrl);
+    if (!regexMatches) {
+      return gitUrl;
+    }
+    const [_all, site, org, repo] = regexMatches!;
     if (org && repo) {
       return `https://${site}/${org}/${repo}`;
     }

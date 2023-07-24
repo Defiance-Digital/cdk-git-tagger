@@ -90,7 +90,7 @@ public readonly normalizeUrl: boolean;
 ```
 
 - *Type:* boolean
-- *Default:* false
+- *Default:* true
 
 A flag on whether to try to normalize the URL found in the git config If enabled, it will turn ssh urls into https urls.
 

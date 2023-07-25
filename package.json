@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.2",
+    "@types/mock-fs": "^4.13.1",
     "@types/node": "^16",
     "@typescript-eslint/eslint-plugin": "^5",
     "@typescript-eslint/parser": "^5",
@@ -48,6 +49,7 @@
     "jsii-diff": "^1.84.0",
     "jsii-docgen": "^9.0.12",
     "jsii-pacmak": "^1.84.0",
+    "mock-fs": "^5.2.0",
     "projen": "^0.71.114",
     "standard-version": "^9",
     "ts-jest": "^29.1.0",

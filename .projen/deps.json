@@ -5,6 +5,10 @@
       "type": "build"
     },
     {
+      "name": "@types/mock-fs",
+      "type": "build"
+    },
+    {
       "name": "@types/node",
       "version": "^16",
       "type": "build"
@@ -70,6 +74,10 @@
     {
       "name": "jsii",
       "version": "~5.0.0",
+      "type": "build"
+    },
+    {
+      "name": "mock-fs",
       "type": "build"
     },
     {

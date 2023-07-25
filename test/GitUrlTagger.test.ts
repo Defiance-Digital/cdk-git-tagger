@@ -1,51 +1,89 @@
 import { Aspects, Stack } from 'aws-cdk-lib';
-import { Capture, Template } from 'aws-cdk-lib/assertions';
+import { Template } from 'aws-cdk-lib/assertions';
 import { Topic } from 'aws-cdk-lib/aws-sns';
-import { GitUrlTagger } from '../src/GitUrlTagger';
+import { GitUrlTagger, GitUrlTaggerProps } from '../src';
 
-const regexSSH = /^git@[A-Za-z0-9-]+\.[A-Za-z0-9-]+:[A-Za-z0-9-]+\/[A-Za-z0-9-]+\.git$/;
-const regexHTTPS = /^https:\/\/[A-Za-z0-9-]+\.[A-Za-z0-9-]+\/[A-Za-z0-9-]+\/[A-Za-z0-9-]+(\.git)?$/;
+// eslint-disable-next-line @typescript-eslint/no-require-imports,import/no-extraneous-dependencies
+const mock = require('mock-fs');
+
+function setupTestStack(props?: Partial<GitUrlTaggerProps>, url: string = 'https://something') {
+  mock({
+    '.git/config': 'url = ' + url,
+  });
+
+  const stack = new Stack();
+  new Topic(stack, 'MyTopic', {});
+
+  Aspects.of(stack).add(new GitUrlTagger(props));
+  return stack;
+}
+afterEach(() => {
+  mock.restore();
+});
 
 describe('Aspect adds tags as expected', () => {
   test('with defaults', () => {
-    const stack = new Stack();
-    new Topic(stack, 'MyTopic', {});
-
-    Aspects.of(stack).add(new GitUrlTagger());
+    const stack = setupTestStack();
 
     const assert = Template.fromStack(stack);
-    const urlCapture = new Capture();
     assert.hasResourceProperties('AWS::SNS::Topic', {
       Tags: [{
         Key: 'GitUrl',
-        Value: urlCapture, // git@github.com:Defiance-Digital/cdk-git-tagger.git
+        Value: 'https://something',
       }],
     });
-
-    const matchesSSH = regexSSH.test(urlCapture.asString());
-    const matchesHTTPS = regexHTTPS.test(urlCapture.asString());
-    expect(matchesSSH || matchesHTTPS).toBeTruthy();
   });
 
-
   test('with overridden tag name', () => {
-    const stack = new Stack();
-    new Topic(stack, 'MyTopic', {});
-
-    Aspects.of(stack).add(new GitUrlTagger({ tagName: 'MyTagName' }));
+    const stack = setupTestStack({ tagName: 'MyTagName' });
 
     const assert = Template.fromStack(stack);
-    const urlCapture = new Capture();
+
     assert.hasResourceProperties('AWS::SNS::Topic', {
       Tags: [{
         Key: 'MyTagName',
-        Value: urlCapture, // git@github.com:Defiance-Digital/cdk-git-tagger.git
+        Value: 'https://something',
       }],
     });
-
-    const matchesSSH = regexSSH.test(urlCapture.asString());
-    const matchesHTTPS = regexHTTPS.test(urlCapture.asString());
-    expect(matchesSSH || matchesHTTPS).toBeTruthy();
   });
 
+  test('normalizes by default', ()=>{
+    const stack = setupTestStack({ tagName: 'MyTagName' }, 'git@github.com:Defiance-Digital/cdk-git-tagger.git');
+
+    const assert = Template.fromStack(stack);
+
+    assert.hasResourceProperties('AWS::SNS::Topic', {
+      Tags: [{
+        Key: 'MyTagName',
+        Value: 'https://github.com/Defiance-Digital/cdk-git-tagger',
+      }],
+    });
+  });
+});
+
+describe('URLs are normalized', function () {
+
+  test('to https when asked', () => {
+    const stack = setupTestStack({ normalizeUrl: true }, 'git@github.com:Defiance-Digital/cdk-git-tagger.git');
+
+    const assert = Template.fromStack(stack);
+    assert.hasResourceProperties('AWS::SNS::Topic', {
+      Tags: [{
+        Key: 'GitUrl',
+        Value: 'https://github.com/Defiance-Digital/cdk-git-tagger',
+      }],
+    });
+  });
+
+  test('doesn\'t change when already https', () => {
+    const stack = setupTestStack({ normalizeUrl: false }, 'git@github.com:Defiance-Digital/cdk-git-tagger.git');
+
+    const assert = Template.fromStack(stack);
+    assert.hasResourceProperties('AWS::SNS::Topic', {
+      Tags: [{
+        Key: 'GitUrl',
+        Value: 'git@github.com:Defiance-Digital/cdk-git-tagger.git',
+      }],
+    });
+  });
 });

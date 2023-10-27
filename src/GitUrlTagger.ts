@@ -24,10 +24,15 @@ export class GitUrlTagger implements IAspect {
   private gitUrl: string;
 
   constructor(private props?: GitUrlTaggerProps) {
-    const gitUrl = this.retrieveGitUrl();
-    const shouldNormalize = props?.normalizeUrl ?? true;
-    this.gitUrl = shouldNormalize ? this.normalizeUrl(gitUrl) : gitUrl;
-
+    let gitUrl = this.pullGitUrlFromFile();
+    if (!gitUrl) {
+      gitUrl = this.retrieveGitUrl();
+      this.putGitUrlInFile(gitUrl);
+      const shouldNormalize = props?.normalizeUrl ?? true;
+      this.gitUrl = shouldNormalize ? this.normalizeUrl(gitUrl) : gitUrl;
+    } else {
+      this.gitUrl = gitUrl;
+    }
   }
 
   visit(construct: IConstruct): void {
@@ -50,6 +55,42 @@ export class GitUrlTagger implements IAspect {
 
     return ''; // .git directory not found
   }
+
+  findRootDirectory(): string {
+    let currentDir = process.cwd(); // Get the current directory
+
+
+    while (currentDir !== '/') {
+      const packageJson = path.join(currentDir, 'package.json');
+
+
+      if (fs.existsSync(packageJson)) {
+
+        return currentDir;
+      }
+
+      currentDir = path.dirname(currentDir); // Move up to the parent directory
+    }
+    return ''; // root directory not found
+  }
+
+  pullGitUrlFromFile() {
+    const rootpath = this.findRootDirectory();
+    const gitUrlTaggerConfig = path.join(rootpath, 'git-url-tagger.json');
+    if (fs.existsSync(gitUrlTaggerConfig)) {
+      const data = fs.readFileSync(gitUrlTaggerConfig, 'utf8');
+      const config = JSON.parse(data);
+      return config.url;
+    }
+  }
+
+  putGitUrlInFile(gitUrl: string) {
+    const rootpath = this.findRootDirectory();
+    console.log('rootpath: ' + rootpath);
+    const gitUrlTaggerConfig = path.join(rootpath, 'git-url-tagger.json');
+    fs.writeFileSync(gitUrlTaggerConfig, JSON.stringify({ url: gitUrl }));
+  }
+
 
   retrieveGitUrl(): string {
     const gitpath = this.findGitDirectory();

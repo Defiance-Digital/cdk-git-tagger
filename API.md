@@ -140,6 +140,9 @@ new GitUrlTagger(props?: GitUrlTaggerProps)
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#@defiance-digital/cdk-git-tagger.GitUrlTagger.findGitDirectory">findGitDirectory</a></code> | *No description.* |
+| <code><a href="#@defiance-digital/cdk-git-tagger.GitUrlTagger.findRootDirectory">findRootDirectory</a></code> | *No description.* |
+| <code><a href="#@defiance-digital/cdk-git-tagger.GitUrlTagger.pullGitUrlFromFile">pullGitUrlFromFile</a></code> | *No description.* |
+| <code><a href="#@defiance-digital/cdk-git-tagger.GitUrlTagger.putGitUrlInFile">putGitUrlInFile</a></code> | *No description.* |
 | <code><a href="#@defiance-digital/cdk-git-tagger.GitUrlTagger.retrieveGitUrl">retrieveGitUrl</a></code> | *No description.* |
 | <code><a href="#@defiance-digital/cdk-git-tagger.GitUrlTagger.visit">visit</a></code> | All aspects can visit an IConstruct. |
 
@@ -150,6 +153,30 @@ new GitUrlTagger(props?: GitUrlTaggerProps)
 ```typescript
 public findGitDirectory(): string
 ```
+
+##### `findRootDirectory` <a name="findRootDirectory" id="@defiance-digital/cdk-git-tagger.GitUrlTagger.findRootDirectory"></a>
+
+```typescript
+public findRootDirectory(): string
+```
+
+##### `pullGitUrlFromFile` <a name="pullGitUrlFromFile" id="@defiance-digital/cdk-git-tagger.GitUrlTagger.pullGitUrlFromFile"></a>
+
+```typescript
+public pullGitUrlFromFile(): any
+```
+
+##### `putGitUrlInFile` <a name="putGitUrlInFile" id="@defiance-digital/cdk-git-tagger.GitUrlTagger.putGitUrlInFile"></a>
+
+```typescript
+public putGitUrlInFile(gitUrl: string): void
+```
+
+###### `gitUrl`<sup>Required</sup> <a name="gitUrl" id="@defiance-digital/cdk-git-tagger.GitUrlTagger.putGitUrlInFile.parameter.gitUrl"></a>
+
+- *Type:* string
+
+---
 
 ##### `retrieveGitUrl` <a name="retrieveGitUrl" id="@defiance-digital/cdk-git-tagger.GitUrlTagger.retrieveGitUrl"></a>
 

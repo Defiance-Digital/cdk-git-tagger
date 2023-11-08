@@ -5,23 +5,24 @@ import { IConstruct } from 'constructs';
 
 export interface GitUrlTaggerProps {
   /**
-   * The Tag key/name to use
-   *
-   * @default 'GitUrl'
-   */
+     * The Tag key/name to use
+     *
+     * @default 'GitUrl'
+     */
   readonly tagName?: string;
 
   /**
-   * A flag on whether to try to normalize the URL found in the git config
-   * If enabled, it will turn ssh urls into https urls.
-   *
-   * @default true
-   */
+     * A flag on whether to try to normalize the URL found in the git config
+     * If enabled, it will turn ssh urls into https urls.
+     *
+     * @default true
+     */
   readonly normalizeUrl?: boolean;
 }
 
 export class GitUrlTagger implements IAspect {
   private gitUrl: string;
+  private readonly _gitUrlTaggerFileName = '.git-url-tagger.json';
 
   constructor(private props?: GitUrlTaggerProps) {
     let gitUrl = this.pullGitUrlFromFile();
@@ -71,12 +72,13 @@ export class GitUrlTagger implements IAspect {
 
       currentDir = path.dirname(currentDir); // Move up to the parent directory
     }
-    return ''; // root directory not found
+    return process.cwd(); // root directory not found
   }
+
 
   pullGitUrlFromFile() {
     const rootpath = this.findRootDirectory();
-    const gitUrlTaggerConfig = path.join(rootpath, 'git-url-tagger.json');
+    const gitUrlTaggerConfig = path.join(rootpath, this._gitUrlTaggerFileName);
     if (fs.existsSync(gitUrlTaggerConfig)) {
       const data = fs.readFileSync(gitUrlTaggerConfig, 'utf8');
       const config = JSON.parse(data);
@@ -85,9 +87,11 @@ export class GitUrlTagger implements IAspect {
   }
 
   putGitUrlInFile(gitUrl: string) {
-    const rootpath = this.findRootDirectory();
+    let rootpath = this.findRootDirectory();
+
+
     console.log('rootpath: ' + rootpath);
-    const gitUrlTaggerConfig = path.join(rootpath, 'git-url-tagger.json');
+    const gitUrlTaggerConfig = path.join(rootpath, this._gitUrlTaggerFileName);
     fs.writeFileSync(gitUrlTaggerConfig, JSON.stringify({ url: gitUrl }));
   }
 

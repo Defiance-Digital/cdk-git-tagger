@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import { Aspects, Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { Topic } from 'aws-cdk-lib/aws-sns';
@@ -6,10 +8,12 @@ import { GitUrlTagger, GitUrlTaggerProps } from '../src';
 // eslint-disable-next-line @typescript-eslint/no-require-imports,import/no-extraneous-dependencies
 const mock = require('mock-fs');
 
-function setupTestStack(props?: Partial<GitUrlTaggerProps>, url: string = 'https://something') {
+function setupTestStack(props?: Partial<GitUrlTaggerProps>, url: string = 'https://something', additionalFileSetup: () => void = ()=> {}) {
   mock({
     '.git/config': 'url = ' + url,
   });
+
+  additionalFileSetup();
 
   const stack = new Stack();
   new Topic(stack, 'MyTopic', {});
@@ -17,6 +21,7 @@ function setupTestStack(props?: Partial<GitUrlTaggerProps>, url: string = 'https
   Aspects.of(stack).add(new GitUrlTagger(props));
   return stack;
 }
+
 afterEach(() => {
   mock.restore();
 });
@@ -47,7 +52,7 @@ describe('Aspect adds tags as expected', () => {
     });
   });
 
-  test('normalizes by default', ()=>{
+  test('normalizes by default', () => {
     const stack = setupTestStack({ tagName: 'MyTagName' }, 'git@github.com:Defiance-Digital/cdk-git-tagger.git');
 
     const assert = Template.fromStack(stack);
@@ -85,5 +90,33 @@ describe('URLs are normalized', function () {
         Value: 'git@github.com:Defiance-Digital/cdk-git-tagger.git',
       }],
     });
+  });
+});
+
+
+describe('URLs are stored in files', function () {
+
+  test('to create file', () => {
+    const stack = setupTestStack({ normalizeUrl: false }, 'git@github.com:Defiance-Digital/cdk-git-tagger.git');
+    Template.fromStack(stack);
+    expect(fs.readFileSync('.git-url-tagger.json', 'utf8')).toEqual('{"url":"git@github.com:Defiance-Digital/cdk-git-tagger.git"}');
+  });
+
+  test('to read cached file', () => {
+    let cachedData = JSON.stringify({ url: 'test' });
+    const stack = setupTestStack(
+      { normalizeUrl: false },
+      'git@github.com:Defiance-Digital/cdk-git-tagger.git',
+      ()=>fs.writeFileSync(path.join(process.cwd(), '.git-url-tagger.json'), cachedData),
+    );
+
+    const assert = Template.fromStack(stack);
+    assert.hasResourceProperties('AWS::SNS::Topic', {
+      Tags: [{
+        Key: 'GitUrl',
+        Value: 'test',
+      }],
+    });
+    expect(fs.readFileSync('.git-url-tagger.json', 'utf8')).toEqual(cachedData);
   });
 });

@@ -8,10 +8,12 @@ import { GitUrlTagger, GitUrlTaggerProps } from '../src';
 // eslint-disable-next-line @typescript-eslint/no-require-imports,import/no-extraneous-dependencies
 const mock = require('mock-fs');
 
-function setupTestStack(props?: Partial<GitUrlTaggerProps>, url: string = 'https://something') {
+function setupTestStack(props?: Partial<GitUrlTaggerProps>, url: string = 'https://something', additionalFileSetup: () => void = ()=> {}) {
   mock({
     '.git/config': 'url = ' + url,
   });
+
+  additionalFileSetup();
 
   const stack = new Stack();
   new Topic(stack, 'MyTopic', {});
@@ -101,8 +103,13 @@ describe('URLs are stored in files', function () {
   });
 
   test('to read cached file', () => {
-    const stack = setupTestStack({ normalizeUrl: false }, 'git@github.com:Defiance-Digital/cdk-git-tagger.git');
-    fs.writeFileSync(path.join(process.cwd(), '.git-url-tagger.json'), '{ "url": "test" }');
+    let cachedData = JSON.stringify({ url: 'test' });
+    const stack = setupTestStack(
+      { normalizeUrl: false },
+      'git@github.com:Defiance-Digital/cdk-git-tagger.git',
+      ()=>fs.writeFileSync(path.join(process.cwd(), '.git-url-tagger.json'), cachedData),
+    );
+
     const assert = Template.fromStack(stack);
     assert.hasResourceProperties('AWS::SNS::Topic', {
       Tags: [{
@@ -110,6 +117,6 @@ describe('URLs are stored in files', function () {
         Value: 'test',
       }],
     });
-    expect(fs.readFileSync('.git-url-tagger.json', 'utf8')).toEqual('test');
+    expect(fs.readFileSync('.git-url-tagger.json', 'utf8')).toEqual(cachedData);
   });
 });

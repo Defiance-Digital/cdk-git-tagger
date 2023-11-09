@@ -57,9 +57,8 @@ export class GitUrlTagger implements IAspect {
     return ''; // .git directory not found
   }
 
-  findRootDirectory(): string {
+  private findRootDirectory(): string {
     let currentDir = process.cwd(); // Get the current directory
-
 
     while (currentDir !== '/') {
       const packageJson = path.join(currentDir, 'package.json');
@@ -76,7 +75,7 @@ export class GitUrlTagger implements IAspect {
   }
 
 
-  pullGitUrlFromFile() {
+  private pullGitUrlFromFile() {
     const rootpath = this.findRootDirectory();
     const gitUrlTaggerConfig = path.join(rootpath, this._gitUrlTaggerFileName);
     if (fs.existsSync(gitUrlTaggerConfig)) {
@@ -89,8 +88,6 @@ export class GitUrlTagger implements IAspect {
   putGitUrlInFile(gitUrl: string) {
     let rootpath = this.findRootDirectory();
 
-
-    console.log('rootpath: ' + rootpath);
     const gitUrlTaggerConfig = path.join(rootpath, this._gitUrlTaggerFileName);
     fs.writeFileSync(gitUrlTaggerConfig, JSON.stringify({ url: gitUrl }));
   }
